@@ -112,6 +112,55 @@ module Autumn
         @nicks.include? sender[:nick]
       end
     end
+
+    # *WARNING*: This was tested on freenode network only. It' heavily network
+    # dependent so be very careful with it.
+    #
+    # Works just like nick authentication, the only difference is that one has
+    # to be identified to the server.
+
+    class RegisteredNick < Base
+
+      def initialize(options={})
+        puts "RegisterNick initialization"
+        @nicks = options[:nick]
+        @nicks ||= options[:nicks]
+        raise "You must must the nick of an administrator to use nick-based authentication." if @nicks.nil?
+        @nicks = [ @nicks ] if @nicks.kind_of? String
+        @identified = {}
+        @whois_lock = Mutex.new
+        @identification_lock = Mutex.new
+      end
+
+      def authenticate(stem, channel, sender, leaf) # :nodoc:
+        nick = sender[:nick]
+        @nicks.include?(nick) && is_identified?(stem,nick)
+      end
+
+      # Respnse code that comes at the end of whois message
+      def irc_318_response(stem, server, whatever, sender, msg)
+        @whois_lock.unlock
+      end
+
+      # Freenode's response code including line with identification information
+      def irc_320_response(stem, server, whatever, nick, msg)
+        nick = nick[0] if nick.kind_of? Array
+        @identified[nick] = true if msg.strip == "is identified to services"
+      end
+
+      private
+
+      def is_identified?(stem,nick)
+        @identification_lock.synchronize do
+          @whois_lock.lock
+          @identified[nick] = false
+          stem.whois nick
+          @whois_lock.synchronize {}
+          @identified[nick]
+        end
+      end
+
+    end
     
     # Authenticates by the host portion of an IRC message. A hostmask is used to
     # match the relevant portion of the address with a whitelist of accepted

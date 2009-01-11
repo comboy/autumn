@@ -1,5 +1,8 @@
 h1. Autumn: A Ruby IRC Bot Framework
 
+Small modifications by Kacper Cieśla (comboy). Just let me write it here: Tim Morgan did
+an *awesome* job writing this framework.
+
 *Version 3.0 (Jul 4, 2008)*
 
 | Author | Tim Morgan (riscfuture@gmail.com) |
