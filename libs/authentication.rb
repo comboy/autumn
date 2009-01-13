@@ -113,11 +113,10 @@ module Autumn
       end
     end
 
-    # *WARNING*: This was tested on freenode network only. It' heavily network
-    # dependent so be very careful with it.
-    #
     # Works just like nick authentication, the only difference is that one has
-    # to be identified to the server.
+    # to be identified to the nickserver.
+    #
+    # This currently will only work on ircd, dancer and dalnet servers.
 
     class RegisteredNick < Base
 
@@ -138,14 +137,18 @@ module Autumn
       end
 
       # Respnse code that comes at the end of whois message
-      def irc_318_response(stem, server, whatever, sender, msg)
+      def irc_rpl_endofwhois_response(stem, sender, recipient, arguments, msg)
         @whois_lock.unlock
       end
 
-      # Freenode's response code including line with identification information
-      def irc_320_response(stem, server, whatever, nick, msg)
-        nick = nick[0] if nick.kind_of? Array
-        @identified[nick] = true if msg.strip == "is identified to services"
+      # Dancer and ircd response code including line with identification information
+      def irc_rpl_whois_hidden_response(stem, sender, recipient, arguments, msg)
+        @identified[arguments.first] = true if msg.strip == "is identified to services"
+      end
+
+      # DALnet response code including line with identification information
+      def irc_rpl_whoisregnick_response(stem, sender, recipient, arguments, msg)
+        @identified[arguments.first] = true if msg.strip == "has identified for this nick"
       end
 
       private
