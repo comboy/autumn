@@ -159,7 +159,7 @@ module Autumn
     # Describes all possible channel names. Omits the channel prefix, as that
     # can vary from server to server. (See channel?)
     CHANNEL_REGEX = "[^\\s\\x7,:]+"
-    # Describes all possible nicks.
+    # The default regular expression for IRC nicknames.
     NICK_REGEX = "[a-zA-Z][a-zA-Z0-9\\-_\\[\\]\\{\\}\\\\|`\\^]+"
   
     # A parameter in an IRC command.
@@ -316,6 +316,8 @@ module Autumn
       @throttle_rate ||= 1
       @throttle_threshold = opts[:throttle_threshold]
       @throttle_threshold ||= 5
+      
+      @nick_regex = (opts[:nick_regex] ? opts[:nick_regex].to_re : NICK_REGEX)
       
       @channels = Set.new
       @channels.merge opts[:channels] if opts[:channels]
@@ -587,7 +589,7 @@ module Autumn
     # Returns true if the string appears to be a nickname.
     
     def nick?(str)
-      str.match(NICK_REGEX) != nil
+      str.match(@nick_regex) != nil
     end
 
     # Returns the nick this stem is using.
@@ -768,15 +770,18 @@ module Autumn
         msg = $1
         meths[:irc_server_error] = [ self, msg ]
         return meths
-      elsif comm =~ /^:(#{NICK_REGEX})!(\S+?)@(\S+?)\s+([A-Z]+)\s+(.*?)[\r\n]*$/ then
+      elsif comm =~ /^:(#{@nick_regex})!(\S+?)@(\S+?)\s+([A-Z]+)\s+(.*?)[\r\n]*$/ then
         sender = { :nick => $1, :user => $2, :host => $3 }
         command, arg_str = $4, $5
-      elsif comm =~ /^:(#{NICK_REGEX})\s+([A-Z]+)\s+(.*?)[\r\n]*$/ then
+      elsif comm =~ /^:(#{@nick_regex})\s+([A-Z]+)\s+(.*?)[\r\n]*$/ then
         sender = { :nick => $1 }
         command, arg_str = $2, $3
+      elsif comm =~ /^:([^\s:]+?)\s+([A-Z]+)\s+(.*?)[\r\n]*$/ then
+        server, command, arg_str = $1, $2, $3
+        arg_array, msg = split_out_message(arg_str)
       elsif comm =~ /^(\w+)\s+:(.+?)[\r\n]*$/ then
         command, msg = $1, $2
-      elsif comm =~ /^:(.+?)\s+(\d+)\s+(.*?)[\r\n]*$/ then
+      elsif comm =~ /^:([^\s:]+?)\s+(\d+)\s+(.*?)[\r\n]*$/ then
         server, code, arg_str = $1, $2, $3
         arg_array, msg = split_out_message(arg_str)
         
@@ -788,7 +793,7 @@ module Autumn
         meths[:irc_response] = [ self, code, server, name, arg_array, msg ]
         return meths
       else
-        logger.error "Couldn't parse IRC message: #{comm}"
+        logger.error "Couldn't parse IRC message: #{comm.inspect}"
         return meths
       end
       
@@ -855,10 +860,14 @@ module Autumn
     end
     
     def split_out_message(arg_str)
-      arg_str, *msg = arg_str.split(':')
-      msg = msg.join(':')
-      arg_array = arg_str.strip.words
-      return arg_array, msg
+      if arg_str.match(/^(.*?):(.*)$/) then
+        arg_array = $1.strip.words
+        msg = $2
+        return arg_array, msg
+      else
+        # no colon in message
+        return arg_str.strip.words, nil
+      end
     end
     
     def post_startup

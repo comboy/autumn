@@ -402,7 +402,7 @@ module Autumn
         options[:only] = [ options[:only] ]
       end
       if options[:except] and not options[:except].kind_of? Array then
-        options[:except] = [ options[:only] ]
+        options[:except] = [ options[:except] ]
       end
       write_inheritable_array 'before_filters', [ [ filter.to_sym, options ] ]
     end
@@ -429,7 +429,7 @@ module Autumn
         options[:only] = [ options[:only] ]
       end
       if options[:except] and not options[:except].kind_of? Array then
-        options[:except] = [ options[:only] ]
+        options[:except] = [ options[:except] ]
       end
       write_inheritable_array 'after_filters', [ [ filter.to_sym, options ] ]
     end
@@ -561,7 +561,7 @@ module Autumn
       commands.map! { |m| m.match(/^(\w+)_command$/)[1] }
       commands.reject! { |m| UNADVERTISED_COMMANDS.include? m }
       return if commands.empty?
-      commands.map! { |c| "!#{c}" }
+      commands.map! { |c| "#{options[:command_prefix]}#{c}" }
       "Commands for #{leaf_name}: #{commands.sort.join(', ')}"
     end
     
@@ -687,9 +687,7 @@ module Autumn
       return true if @authenticator.nil?
       # Any method annotated as protected is authenticated unconditionally
       if not self.class.ann("#{cmd}_command".to_sym, :protected) then
-        # Otherwise, we only authenticate if it's listed as protected in the config
-        return true if options[:authentication]['only'] and not options[:authentication]['only'].include? cmd
-        return true if options[:authentication]['except'] and options[:authentication]['except'].include? cmd
+        return true
       end
       if @authenticator.authenticate(stem, channel, sender, self) then
         return true
