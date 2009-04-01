@@ -1,0 +1,7 @@
+--- 
+Administrator: 
+  authentication: 
+    type: op
+  class: Administrator
+Insulter: 
+  class: Insulter

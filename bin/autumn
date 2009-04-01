@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+if ARGV.empty?
+   puts "Usage: autumn /path/to/app"
+   puts "\nDescription:"
+   puts "    Creates new autumn app skeleton in the given directory."
+else
+   begin
+      dir = ARGV[0]
+      print "Creatating directory #{dir}... "
+      Dir.mkdir dir
+      puts "OK"
+
+      print "Copying appliciation skeleton to #{dir}... "
+      my_dir = File.expand_path(File.dirname(__FILE__))
+      FileUtils.cp_r Dir.glob(File.join(my_dir,'..','skel','*')), dir
+      puts "OK"
+
+   rescue Errno::EEXIST => e
+      puts "Directory already exists."
+      exit 1
+   end
+    
+end
