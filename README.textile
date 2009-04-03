@@ -29,15 +29,15 @@ configuration.
 
 h2. Installation
 
-<tt>gem sources -a http://gems.github.com
-sudo gem install comboy-autumn</tt>
+<pre>gem sources -a http://gems.github.com
+sudo gem install comboy-autumn</pre>
 
 And you're ready to go.
 
 h2. Generating Application Skeleton
 
 To create your first Autumn IRC Bot simply type:
-<tt>autumn mybot</tt>
+<pre>autumn mybot</pre>
 
 This will generate directory structure described below in directory called mybot.
 
@@ -84,7 +84,7 @@ overview you can consult for future reference:
 
 h3. For developers
 
-If you want to have somem fun with Autumn source code here is short description of where to find what:
+If you want to have some fun with Autumn source code here is short description of where to find what:
 
 * *libs/* - Autumn core code
 ** channel_leaf.rb - A leaf subclass that can ignore messages from certain
