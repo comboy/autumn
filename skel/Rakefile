@@ -1,5 +1,5 @@
 require 'rake'
-require 'libs/genesis'
+require 'autumn/genesis'
 
 task :default do
   puts 'Type "rake --tasks" to see a list of tasks you can perform.'
@@ -7,14 +7,14 @@ end
 
 # Load the Autumn environment.
 task :environment do
-  AL_ROOT = File.dirname(__FILE__)
+  APP_ROOT = File.dirname(__FILE__)
   @genesis = Autumn::Genesis.new
   @genesis.load_global_settings
   @genesis.load_season_settings
 end
 
 task :boot do
-  AL_ROOT = File.dirname(__FILE__)
+  APP_ROOT = File.dirname(__FILE__)
   @genesis = Autumn::Genesis.new
   @genesis.boot! false
 end

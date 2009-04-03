@@ -288,6 +288,7 @@ module Autumn
     # a channel name-channel password association.
   
     def initialize(server, newnick, opts)
+      puts "---------------------- INITIALIZATION #{opts[:channels]}"
       raise ArgumentError, "Please specify at least one channel" unless opts[:channel] or opts[:channels]
       
       @nick = newnick

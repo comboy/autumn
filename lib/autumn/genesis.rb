@@ -8,6 +8,7 @@ require 'logger'
 require 'facets'
 require 'facets/random'
 require 'anise'
+require 'autumn'
 require 'autumn/misc'
 require 'autumn/speciator'
 require 'autumn/authentication'
@@ -111,7 +112,7 @@ module Autumn # :nodoc:
     # PREREQS: load_libraries
     
     def load_daemon_info
-      Dir.glob("#{AUTUMN_LIB_DIR}/resources/daemons/*.yml").each do |yml_file|
+      Dir.glob("#{AUTUMN_LIB_DIR}/../resources/daemons/*.yml").each do |yml_file|
         yml = YAML.load(File.open(yml_file, 'r'))
         Daemon.new File.basename(yml_file, '.yml'), yml
       end
