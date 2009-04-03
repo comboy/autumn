@@ -7,8 +7,6 @@ APP_ROOT = File.expand_path("#{File.dirname(__FILE__)}/..")
 $: << APP_ROOT
 
 require 'rubygems'
-require 'autumn'
-
 require 'autumn/genesis'
 
 puts "Loading Autumn #{AUTUMN_VERSION}"

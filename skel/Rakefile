@@ -46,6 +46,14 @@ namespace :app do
   end
 end
 
+namespace :autumn do
+  desc "Update autumn scripts"
+  task :update => :environment do
+    require 'autumn/script'
+    Autumn::Script.update_all
+  end
+end
+
 namespace :log do
   desc "Remove all log files"
   task :clear do

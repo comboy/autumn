@@ -61,6 +61,13 @@ module Autumn
     def call_generator(meth)
       generator.send(meth, name, :verbose => true, :vcs => vcs)
     end
+
+    # Updates all scripts in the app directory
+    def self.update_all
+      require 'fileutils'
+      FileUtils.cp_r Dir.glob(File.join(AUTUMN_LIB_DIR,'..','skel','script','*')), File.join(APP_ROOT,'script')
+      puts "Scripts updated."
+    end
     
     private
     
