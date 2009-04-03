@@ -9,14 +9,15 @@ if ARGV.empty?
 else
    begin
       dir = ARGV[0]
-      print "Creatating directory #{dir}... "
+      print "Preparing application skeleton in directory #{dir}... "; STDOUT.flush
       Dir.mkdir dir
-      puts "OK"
-
-      print "Copying appliciation skeleton to #{dir}... "
       my_dir = File.expand_path(File.dirname(__FILE__))
       FileUtils.cp_r Dir.glob(File.join(my_dir,'..','skel','*')), dir
-      puts "OK"
+      
+      # There's a small problem with packaging empty dirs into a gem
+      FileUtils.mkdir_p File.join(dir,'tmp')
+      FileUtils.mkdir_p File.join(dir,'log')
+      puts "DONE"
 
    rescue Errno::EEXIST => e
       puts "Directory already exists."
