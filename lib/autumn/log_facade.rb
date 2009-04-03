@@ -37,13 +37,13 @@ module Autumn
       @logger = logger
       @stdout = Speciator.instance.season(:logging) == 'debug'
     end
-    
+
     def method_missing(meth, *args) # :nodoc:
       if args.size == 1 and args.only.kind_of? String then
         args = [ "#{name} (#{type}): #{args.only}" ]
       end
-      @logger.send meth, *args
       puts (args.first.kind_of?(Exception) ? (args.first.to_s + "\n" + args.first.backtrace.join("\n")) : args.first) if @stdout
+      @logger.send meth, *args
     end
   end
 end
