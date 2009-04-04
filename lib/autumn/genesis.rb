@@ -13,7 +13,7 @@ require 'autumn/misc'
 require 'autumn/speciator'
 require 'autumn/authentication'
 
-AUTUMN_VERSION = "3.0 (7-4-08)"
+AUTUMN_VERSION = "3.1 (4-4-09)"
 
 module Autumn # :nodoc:
   

@@ -113,58 +113,6 @@ module Autumn
       end
     end
 
-    # Works just like nick authentication, the only difference is that one has
-    # to be identified to the nickserver.
-    #
-    # This currently will only work on ircd, dancer and dalnet servers.
-
-    class RegisteredNick < Base
-
-      def initialize(options={})
-        puts "RegisterNick initialization"
-        @nicks = options[:nick]
-        @nicks ||= options[:nicks]
-        raise "You must must the nick of an administrator to use nick-based authentication." if @nicks.nil?
-        @nicks = [ @nicks ] if @nicks.kind_of? String
-        @identified = {}
-        @whois_lock = Mutex.new
-        @identification_lock = Mutex.new
-      end
-
-      def authenticate(stem, channel, sender, leaf) # :nodoc:
-        nick = sender[:nick]
-        @nicks.include?(nick) && is_identified?(stem,nick)
-      end
-
-      # Respnse code that comes at the end of whois message
-      def irc_rpl_endofwhois_response(stem, sender, recipient, arguments, msg)
-        @whois_lock.unlock
-      end
-
-      # Dancer and ircd response code including line with identification information
-      def irc_rpl_whois_hidden_response(stem, sender, recipient, arguments, msg)
-        @identified[arguments.first] = true if msg.strip == "is identified to services"
-      end
-
-      # DALnet response code including line with identification information
-      def irc_rpl_whoisregnick_response(stem, sender, recipient, arguments, msg)
-        @identified[arguments.first] = true if msg.strip == "has identified for this nick"
-      end
-
-      private
-
-      def is_identified?(stem,nick)
-        @identification_lock.synchronize do
-          @whois_lock.lock
-          @identified[nick] = false
-          stem.whois nick
-          @whois_lock.synchronize {}
-          @identified[nick]
-        end
-      end
-
-    end
-    
     # Authenticates by the host portion of an IRC message. A hostmask is used to
     # match the relevant portion of the address with a whitelist of accepted
     # host addresses.
