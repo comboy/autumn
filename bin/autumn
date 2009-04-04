@@ -3,6 +3,8 @@
 require 'fileutils'
 
 if ARGV.empty?
+   require 'autumn/genesis'
+   puts "Autumn ver. #{AUTUMN_VERSION}\n\n"
    puts "Usage: autumn /path/to/app"
    puts "\nDescription:"
    puts "    Creates new autumn app skeleton in the given directory."
