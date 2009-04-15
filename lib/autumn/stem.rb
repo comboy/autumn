@@ -736,7 +736,15 @@ module Autumn
   
     def connect
       logger.debug "Connecting to #{@server}:#{@port}..."
-      socket = TCPSocket.new @server, @port, @local_ip
+      begin 
+        socket = TCPSocket.new @server, @port, @local_ip
+      rescue SocketError => e
+        emsg = "Could not connect to the irc server (#{e}),"
+        logger.fatal emsg
+        logger.debug "#{e.backtrace.join("\n")}"
+        STDERR.puts emsg 
+        exit 1 # FIXME: should throw some connection error exception
+      end
       return socket unless options[:ssl]
       ssl_context = OpenSSL::SSL::SSLContext.new
       unless ssl_context.verify_mode
