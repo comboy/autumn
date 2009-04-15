@@ -283,6 +283,8 @@ module Autumn
     #                   PRIVMSG's when the leaf's output is throttled.
     # +throttle_threshold+:: Sets the number of simultaneous messages that must
     #                        be queued before the leaf begins throttling output.
+    # +shout_on_exception+: If enabled, it will try to inform about exceptions 
+    #                       with channel message.
     #
     # Any channel name can be a one-item hash, in which case it is taken to be
     # a channel name-channel password association.
@@ -475,7 +477,7 @@ module Autumn
             listener.respond meth, *args
           rescue Exception
             options[:logger].error $!
-            message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + $!.to_s) rescue nil # Try to report the error if possible
+            message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + $!.to_s) if @options[:shout_on_exception] rescue nil # Try to report the error if possible
           end
         end
       end

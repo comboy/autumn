@@ -7,3 +7,4 @@ Example:
   rejoin: true
   channel: "#yourchannel"
   server: irc.yourircserver.com
+  shout_on_exception: true
