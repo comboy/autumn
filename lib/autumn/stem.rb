@@ -475,9 +475,9 @@ module Autumn
         Thread.new do
           begin
             listener.respond meth, *args
-          rescue Exception
-            options[:logger].error $!
-            message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + $!.to_s) if @options[:shout_on_exception] rescue nil # Try to report the error if possible
+          rescue Exception => e 
+            options[:logger].error "#{e.to_s} \n--- Backtrace:\n#{e.backtrace.join("\n")}"
+            message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + e.to_s) if @options[:shout_on_exception] rescue nil # Try to report the error if possible
           end
         end
       end
