@@ -7,7 +7,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'anise'
   s.add_dependency 'english'
   s.add_dependency 'facets'
-  s.add_dependency 'system_time'
   #s.description = ""
  
   s.authors = ['Tim Morgan','Kacper Cieśla']
