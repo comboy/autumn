@@ -160,7 +160,7 @@ module Autumn
     # can vary from server to server. (See channel?)
     CHANNEL_REGEX = "[^\\s\\x7,:]+"
     # The default regular expression for IRC nicknames.
-    NICK_REGEX = "[a-zA-Z][a-zA-Z0-9\\-_\\[\\]\\{\\}\\\\|`\\^]+"
+    NICK_REGEX = "[a-zA-Z_\\[\\]\\{\\}\\|`\\^][a-zA-Z0-9\\-_\\[\\]\\{\\}\\\\|`\\^]+"
   
     # A parameter in an IRC command.
   
